@@ -2,7 +2,11 @@ package edu.grinnell.csc207.util;
 
 public class BFRegisterSet {
 
-  BigFraction[] registers = new BigFraction[26];
+  BigFraction[] registers;
+
+  public BFRegisterSet() {
+    registers = new BigFraction[26];
+  }
     
   public void store(char register, BigFraction val) {
     int index = (int) register - 'a';

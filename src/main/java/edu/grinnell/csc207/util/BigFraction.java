@@ -86,10 +86,13 @@ public class BigFraction {
    *   The fraction in string form
    */
   public BigFraction(String str) {
-    
-
-    this.num = DEFAULT_NUMERATOR;
-    this.denom = DEFAULT_DENOMINATOR;
+    String[] substrings = str.split("/");
+    if (substrings.length == 1) {
+      this.denom = new BigInteger("1");
+    } else {
+      this.denom = new BigInteger(substrings[1]);
+    }
+    this.num = new BigInteger(substrings[0]);
   } // BigFraction
 
   // +---------+------------------------------------------------------

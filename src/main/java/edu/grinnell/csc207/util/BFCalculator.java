@@ -2,7 +2,11 @@ package edu.grinnell.csc207.util;
 
 public class BFCalculator {
 
-  private BigFraction recent;
+  BigFraction recent;
+
+  public BFCalculator() {
+    recent = new BigFraction(null);
+  }
 
   public BigFraction get() {
     if (this.recent != null) {
