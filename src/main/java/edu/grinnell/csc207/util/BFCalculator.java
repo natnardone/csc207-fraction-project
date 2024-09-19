@@ -1,7 +1,5 @@
 package edu.grinnell.csc207.util;
 
-import edu.grinnell.csc207.util.BigFraction;
-
 public class BFCalculator {
 
   private BigFraction recent;

@@ -125,8 +125,17 @@ public class BigFraction {
       (this.num.multiply(addend.denom)).add(addend.num.multiply(this.denom));
 
     // Return the computed value
-    return new BigFraction(resultNumerator, resultDenominator);
+    return (new BigFraction(resultNumerator, resultDenominator)).fractional();
   } // add(BigFraction)
+
+  public BigFraction subtract(BigFraction subtr) {
+    BigInteger resultNumerator;
+    BigInteger resultDenominator;
+
+    resultNumerator = (this.num.multiply(subtr.denom)).subtract(subtr.num.multiply(this.denom));
+    resultDenominator = this.denom.multiply(subtr.denom);
+    return (new BigFraction(resultNumerator, resultDenominator)).fractional();
+  }
 
   public BigFraction multiply(BigFraction mult) {
     BigInteger resultNumerator;
@@ -135,7 +144,13 @@ public class BigFraction {
     resultNumerator = this.num.multiply(mult.num);
     resultDenominator = this.denom.multiply(mult.denom);
   
-    return new BigFraction(resultNumerator, resultDenominator);
+    return (new BigFraction(resultNumerator, resultDenominator)).fractional();
+  }
+
+  public BigFraction divide(BigFraction divisor) {
+    BigFraction flipped_divisor;
+    flipped_divisor = new BigFraction(divisor.denom, divisor.num);
+    return this.multiply(flipped_divisor);
   }
 
   public BigFraction fractional() {
