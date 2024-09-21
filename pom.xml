@@ -41,7 +41,7 @@
           <artifactId>exec-maven-plugin</artifactId>
           <version>3.3.0</version>
           <configuration>
-            <mainClass>edu.grinnell.csc207.InteractiveCalculator</mainClass>
+            <mainClass>edu.grinnell.csc207.main.InteractiveCalculator</mainClass>
           </configuration>
         </plugin>
 

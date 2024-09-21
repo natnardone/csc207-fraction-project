@@ -160,8 +160,13 @@ public class BigFraction {
     BigInteger resultNumerator;
     BigInteger resultDenominator;
 
-    resultDenominator = this.denom;
-    resultNumerator = this.num.mod(this.denom);
+    if (this.denom.compareTo(BigInteger.valueOf(0)) > 0) {
+      resultDenominator = this.denom;
+      resultNumerator = this.num.mod(this.denom);
+    } else {
+      resultDenominator = this.denom;
+      resultNumerator = this.num;
+    }
 
     return new BigFraction(resultNumerator, resultDenominator);
   }

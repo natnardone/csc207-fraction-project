@@ -5,14 +5,14 @@ public class BFCalculator {
   BigFraction recent;
 
   public BFCalculator() {
-    recent = new BigFraction(null);
+    recent = new BigFraction(0, 1);
   }
 
   public BigFraction get() {
     if (this.recent != null) {
       return this.recent;
     }
-    this.recent = new BigFraction(0, 0);
+    this.recent = new BigFraction(0, 1);
     return this.recent;
   }
 

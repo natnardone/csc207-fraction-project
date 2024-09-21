@@ -45,6 +45,7 @@ public class InteractiveCalculator {
     }
 
     calc.clear();
+    input.close();
 
     /** handle current temp
        * call functions? for keyword/character/fraction?
@@ -133,7 +134,8 @@ public class InteractiveCalculator {
     // definitely potential for errors if there's a trailing operator/num
 
     PrintWriter pen = new PrintWriter(System.out, true);
-    pen.print(calc.get().toString());
+    pen.print(calc.get().toString()+ "\n");
+    pen.flush();
     return true;
 
     /** 
@@ -168,7 +170,7 @@ public class InteractiveCalculator {
 
   public static boolean isNum(String str) {
     // check if whole number or fraction (separate?)
-    return false;
+    return true;
   }
 
   public static boolean isOp(String str) {
@@ -181,5 +183,6 @@ public class InteractiveCalculator {
   public static void printErr() {
     PrintWriter pen = new PrintWriter(System.out, true);
     pen.print("*** Error - Invalid Input\n");
+    pen.flush();
   }
 }
