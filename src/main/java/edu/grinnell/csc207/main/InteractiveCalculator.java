@@ -25,7 +25,7 @@ public class InteractiveCalculator {
           reg.store(values[1].charAt(0), calc.get());
         } else {
           InteractiveCalculator.printErr();
-        }
+        } // if
       } else if (values.length < 3) {
         InteractiveCalculator.printErr();
       } else {
@@ -36,11 +36,12 @@ public class InteractiveCalculator {
             status = false;
             break;
           }
-        }
+        } // if
         if (status == true) {
           status = InteractiveCalculator.calcExpression(calc, values, reg);
-        }
-      }
+        } // if
+      } // if
+      calc.clear();
       temp = input.nextLine();
     }
 
@@ -169,7 +170,20 @@ public class InteractiveCalculator {
   }
 
   public static boolean isNum(String str) {
-    // check if whole number or fraction (separate?)
+    // if is all numbers or numbers divided by a /
+    // loop through characters in string, check if is digit, - sign, or /
+    for (int i = 0; i < str.length(); i++) {
+      char temp = str.charAt(i);
+      // check - first, then /, return false if either of those are wrong
+      // check else if digit (i.e. any other non-digit character should not be in the string)
+      if (temp == '-' && (i != 0)) {
+        return false;
+      } else if ((temp == '/') && ((i == 0) || (i == str.length()-1))) {
+        return false;
+      } else if ((!Character.isDigit(temp)) && (temp != '-') && (temp != '/')) {
+        return false;
+      }
+    }
     return true;
   }
 

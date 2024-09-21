@@ -33,7 +33,7 @@ public class BFCalculator {
   }
 
   public void clear() {
-    this.recent = new BigFraction(0, 0);
+    this.recent = new BigFraction(0, 1);
   }
 
 }
