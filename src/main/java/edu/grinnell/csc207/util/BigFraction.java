@@ -28,7 +28,6 @@ public class BigFraction {
   // +-----------+
 
   /** The default numerator when creating fractions. */
-    // definitely potential for errors if there's a trailing operator/num
   private static final BigInteger DEFAULT_NUMERATOR = BigInteger.valueOf(2);
 
   /** The default denominator when creating fractions. */

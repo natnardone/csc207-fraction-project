@@ -59,6 +59,7 @@ public class InteractiveCalculator {
    */
   public static boolean calcExpression(BFCalculator calc, String[] values, BFRegisterSet reg) {
     String first = values[0];
+    PrintWriter pen = new PrintWriter(System.out, true);
 
     if (first.equals("STORE")) {
       if (InteractiveCalculator.isReg(values[1])) {
@@ -70,10 +71,6 @@ public class InteractiveCalculator {
     } // if
 
     calc.clear();
-
-    if (values.length < 3) {
-      return false;
-    } // if
 
     for (int i = 0; i < values.length; i++) {
       if (!InteractiveCalculator.checkValid(values[i])) {
@@ -90,6 +87,16 @@ public class InteractiveCalculator {
       calc.add(new BigFraction(first));
     } else if (InteractiveCalculator.isReg(first)) {
       calc.add(reg.get(first.charAt(0)));
+    } // if
+
+    if (values.length == 1) {
+      pen.print(calc.get().toString() + "\n");
+      pen.flush();
+      return true;
+    } // if
+
+    if (values.length < 3) {
+      return false;
     } // if
 
     String currentOp;
@@ -132,7 +139,6 @@ public class InteractiveCalculator {
       } // switch
     } // for
 
-    PrintWriter pen = new PrintWriter(System.out, true);
     pen.print(calc.get().toString() + "\n");
     pen.flush();
     return true;
