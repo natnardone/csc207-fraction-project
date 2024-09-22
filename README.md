@@ -2,6 +2,10 @@
 
 Natalie Nardone
 
+A project for CSC-207 2024Fa.
+
+Calculators for working with fractions.
+
 GitHub Repository:
 https://github.com/natnardone/csc207-fraction-project
 
