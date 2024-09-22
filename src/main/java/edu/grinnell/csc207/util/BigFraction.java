@@ -28,6 +28,7 @@ public class BigFraction {
   // +-----------+
 
   /** The default numerator when creating fractions. */
+    // definitely potential for errors if there's a trailing operator/num
   private static final BigInteger DEFAULT_NUMERATOR = BigInteger.valueOf(2);
 
   /** The default denominator when creating fractions. */
@@ -91,7 +92,7 @@ public class BigFraction {
       this.denom = new BigInteger("1");
     } else {
       this.denom = new BigInteger(substrings[1]);
-    }
+    } // if
     this.num = new BigInteger(substrings[0]);
   } // BigFraction
 
@@ -128,48 +129,69 @@ public class BigFraction {
       (this.num.multiply(addend.denom)).add(addend.num.multiply(this.denom));
 
     // Return the computed value
-    return (new BigFraction(resultNumerator, resultDenominator)).fractional();
+    return (new BigFraction(resultNumerator, resultDenominator)).simplify();
   } // add(BigFraction)
 
+  /**
+   * Subtract a fraction from this fraction.
+   *
+   * @param subtr
+   *    The fraction to subtract
+   * @return the result of the subtraction
+   */
   public BigFraction subtract(BigFraction subtr) {
     BigInteger resultNumerator;
     BigInteger resultDenominator;
 
     resultNumerator = (this.num.multiply(subtr.denom)).subtract(subtr.num.multiply(this.denom));
     resultDenominator = this.denom.multiply(subtr.denom);
-    return (new BigFraction(resultNumerator, resultDenominator)).fractional();
-  }
+    return (new BigFraction(resultNumerator, resultDenominator)).simplify();
+  } // subtract(BigFraction)
 
+  /**
+   * Multiply a fraction with this fraction.
+   *
+   * @param mult
+   *    The fraction to multiply
+   * @return the result of the multiplication
+   */
   public BigFraction multiply(BigFraction mult) {
     BigInteger resultNumerator;
     BigInteger resultDenominator;
 
     resultNumerator = this.num.multiply(mult.num);
     resultDenominator = this.denom.multiply(mult.denom);
-  
-    return (new BigFraction(resultNumerator, resultDenominator)).fractional();
-  }
+    return (new BigFraction(resultNumerator, resultDenominator)).simplify();
+  } // multiply(BigFraction)
 
+  /**
+   * Divide this fraction by a fraction.
+   *
+   * @param divisor
+   *    The fraction to divide by
+   * @return the result of the division
+   */
   public BigFraction divide(BigFraction divisor) {
-    BigFraction flipped_divisor;
-    flipped_divisor = new BigFraction(divisor.denom, divisor.num);
-    return this.multiply(flipped_divisor);
-  }
+    BigFraction flippedDivisor;
+    flippedDivisor = new BigFraction(divisor.denom, divisor.num);
+    return this.multiply(flippedDivisor);
+  } // divide(BigFraction)
 
-  public BigFraction fractional() {
+  /**
+   * Simplifies the given fraction by the GCD of the numerator and denominator.
+   * @return the simplified fraction
+   */
+  public BigFraction simplify() {
     BigInteger resultNumerator;
     BigInteger resultDenominator;
+    BigInteger gcd = this.num.gcd(this.denom);
 
-    //if (this.denom.compareTo(BigInteger.valueOf(0)) > 0) {
-    //  resultDenominator = this.denom;
-    //  resultNumerator = this.num.mod(this.denom);
-    //} else {
-    resultDenominator = this.denom;
-    resultNumerator = this.num;
-    //}
+    resultDenominator = this.denom.divide(gcd);
+    resultNumerator = this.num.divide(gcd);
 
     return new BigFraction(resultNumerator, resultDenominator);
-  }
+
+  } // simplify
 
   /**
    * Get the denominator of this fraction.
@@ -177,7 +199,7 @@ public class BigFraction {
    * @return the denominator
    */
   public BigInteger denominator() {
-    return this.denom;
+    return this.simplify().denom;
   } // denominator()
 
   /**
@@ -186,7 +208,7 @@ public class BigFraction {
    * @return the numerator
    */
   public BigInteger numerator() {
-    return this.num;
+    return this.simplify().num;
   } // numerator()
 
   /**
@@ -195,14 +217,17 @@ public class BigFraction {
    * @return a string that represents the fraction.
    */
   public String toString() {
+    BigFraction simplify = this.simplify();
     // Special case: It's zero
-    if (this.num.equals(BigInteger.ZERO)) {
+    if (simplify.num.equals(BigInteger.ZERO)) {
       return "0";
-    } // if it's zero
+    } else if (simplify.denom.equals(new BigInteger("1"))) {
+      return simplify.num + "";
+    } // if
 
     // Lump together the string represention of the numerator,
     // a slash, and the string representation of the denominator
     // return this.num.toString().concat("/").concat(this.denom.toString());
-    return this.num + "/" + this.denom;
+    return simplify.num + "/" + simplify.denom;
   } // toString()
 } // class BigFraction

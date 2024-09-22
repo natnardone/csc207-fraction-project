@@ -2,9 +2,20 @@ package edu.grinnell.csc207.main;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import edu.grinnell.csc207.util.*;
+import edu.grinnell.csc207.util.BFCalculator;
+import edu.grinnell.csc207.util.BFRegisterSet;
+import edu.grinnell.csc207.util.BigFraction;
 
+/**
+ * A class for performing interactive calculations on BigFractions.
+ * @author Natalie Nardone
+ */
 public class InteractiveCalculator {
+  /**
+   * Creates and runs an interactive calculator for the user.
+   * @param args
+   *    The command line arguments
+   */
   public static void main(String[] args) {
 
     PrintWriter pen = new PrintWriter(System.out, true);
@@ -18,94 +29,84 @@ public class InteractiveCalculator {
     boolean status = true;
 
     while (!temp.equals("QUIT")) {
+      status = true;
       String[] values = temp.split(" ");
 
-      if (values[0].equals("STORE")) {
-        if (InteractiveCalculator.isReg(values[1])) {
-          reg.store(values[1].charAt(0), calc.get());
-        } else {
-          InteractiveCalculator.printErr();
-        } // if
-      } else if (values.length < 3) {
+      status = InteractiveCalculator.calcExpression(calc, values, reg);
+      if (!status) {
         InteractiveCalculator.printErr();
-      } else {
-        // checks if all values in the input string are potentially valid
-        for (int i = 0; i < values.length; i++) {
-          if (InteractiveCalculator.checkValid(values[1]) == false) {
-            InteractiveCalculator.printErr();
-            status = false;
-            break;
-          }
-        } // if
-        if (status == true) {
-          status = InteractiveCalculator.calcExpression(calc, values, reg);
-        } // if
       } // if
-      calc.clear();
+
       temp = input.nextLine();
-    }
+    } // while
 
     calc.clear();
+    reg.clear();
     input.close();
 
-    /** handle current temp
-       * call functions? for keyword/character/fraction?
-       * print result if needed
-       * Store
-       * character (register)
-       * number
-       * operator
-       * 
-       * 
-       * differentiate between register, number/fraction, operator
-       * parse entire line, get first value, get next operator and following value, repeat until end of line/array
-       * 
-       * invalid: not register, not operator, not number
-       */
+  } // main(String[])
 
-    // input loop
-    // stop on QUIT
-    // 
-    /**
-     * STORE keyword means store the current "recent" value in the following register
-     * QUIT keyword means quit
-     * register character means set recent to the value of that register
-     * fraction to start means set recent to that value
-     * then proceed with operations and values
-     * each operation indicates the method to call
-     * the value indicates the value to use in the method call
-     * print result
-     */
-  }
-
+  /**
+   * Calculates a mathematical expression.
+   *
+   * @param calc
+   *    The calculator to use
+   * @param values
+   *    The values from the user
+   * @param reg
+   *    The register to use
+   * @return true if the expression is valid, false if the expression is invalid
+   */
   public static boolean calcExpression(BFCalculator calc, String[] values, BFRegisterSet reg) {
     String first = values[0];
 
-    if (InteractiveCalculator.isOp(first)) {
-      InteractiveCalculator.printErr();
+    if (first.equals("STORE")) {
+      if (InteractiveCalculator.isReg(values[1])) {
+        reg.store(values[1].charAt(0), calc.get());
+        return true;
+      } else {
+        return false;
+      } // if
+    } // if
+
+    calc.clear();
+
+    if (values.length < 3) {
       return false;
-    }
-    
+    } // if
+
+    for (int i = 0; i < values.length; i++) {
+      if (!InteractiveCalculator.checkValid(values[i])) {
+        return false;
+      } // if
+    } // if
+
+    if (InteractiveCalculator.isOp(first)) {
+      return false;
+    } // if
+
     // get first value
     if (InteractiveCalculator.isNum(first)) {
       calc.add(new BigFraction(first));
     } else if (InteractiveCalculator.isReg(first)) {
       calc.add(reg.get(first.charAt(0)));
-    }
+    } // if
 
     String currentOp;
     String currentNum;
     BigFraction val;
 
-    // we know values has at least 3 elements
-    // o represents operator, n represents number
-    for (int o = 1, n = 2; o < values.length-1 && n < values.length; o+=2, n+=2) {
+    if (values.length % 2 != 1) {
+      return false;
+    } // if
+
+    for (int o = 1, n = 2; o < values.length - 1 && n < values.length; o += 2, n += 2) {
       currentOp = values[o];
       currentNum = values[n];
       val = null;
       if (!InteractiveCalculator.isOp(currentOp)) {
         return false;
-      }
+      } // if
       if (InteractiveCalculator.isNum(currentNum)) {
         val = new BigFraction(currentNum);
       } else if (InteractiveCalculator.isReg(currentNum)) {
@@ -113,14 +114,12 @@ public class InteractiveCalculator {
           val = reg.get(currentNum.charAt(0));
         } else {
           return false;
-        }
+        } // if
       } else {
         return false;
-      }
+      } // if
 
-      // we have an operator string and a number!
-
-      switch(currentOp) {
+      switch (currentOp) {
         case "+":   calc.add(val);
                     break;
         case "-":   calc.subtract(val);
@@ -130,73 +129,83 @@ public class InteractiveCalculator {
         case "/":   calc.divide(val);
                     break;
         default:    break;
-      }
-    }
-    // definitely potential for errors if there's a trailing operator/num
+      } // switch
+    } // for
 
     PrintWriter pen = new PrintWriter(System.out, true);
-    pen.print(calc.get().toString()+ "\n");
+    pen.print(calc.get().toString() + "\n");
     pen.flush();
     return true;
+  } // calcExpression(BFCalculator, String[], BFRegisterSet)
 
-    /** 
-     * 
-     * get pairs of operator and value until end of array
-     * for each pair, choose correct operator and call with calc and value
-     * when all the way through loop, print result, return true
-     * 
-     * loop through array
-     * check validity-
-     * operator cannot be followed by another operator
-     * register or num cannot be followed by another register or num
-     * 
-     */
-  }
-
+  /**
+   * Checks if the characters in the string are valid for mathematical operations.
+   *
+   * @param str
+   *    The string to check
+   * @return true if the characters are valid and false otherwise
+   */
   public static boolean checkValid(String str) {
-    if ((InteractiveCalculator.isReg(str)) ||
-        (InteractiveCalculator.isNum(str)) ||
-        (InteractiveCalculator.isOp(str))) {
+    if ((InteractiveCalculator.isReg(str))
+        || (InteractiveCalculator.isNum(str))
+        || (InteractiveCalculator.isOp(str))) {
       return true;
-    }
+    } // if
     return false;
-  }
+  } // checkValid(String)
 
+  /**
+   * Checks if the string is a register.
+   * @param str
+   *    The string to check
+   * @return true if the string is a register and false otherwise
+   */
   public static boolean isReg(String str) {
     if ((str.length() == 1) && ('a' <= str.charAt(0)) && (str.charAt(0) <= 'z')) {
       return true;
-    }
+    } // if
     return false;
-  }
+  } // isReg(String)
 
+  /**
+   * Checks if the string is a number.
+   * @param str
+   *    The string to check
+   * @return true if the string is a number and false otherwise
+   */
   public static boolean isNum(String str) {
-    // if is all numbers or numbers divided by a /
-    // loop through characters in string, check if is digit, - sign, or /
     for (int i = 0; i < str.length(); i++) {
       char temp = str.charAt(i);
-      // check - first, then /, return false if either of those are wrong
-      // check else if digit (i.e. any other non-digit character should not be in the string)
       if (temp == '-' && (i != 0)) {
         return false;
-      } else if ((temp == '/') && ((i == 0) || (i == str.length()-1))) {
+      } else if ((temp == '/') && ((i == 0) || (i == str.length() - 1))) {
         return false;
       } else if ((!Character.isDigit(temp)) && (temp != '-') && (temp != '/')) {
         return false;
-      }
-    }
+      } // if
+    } // for
     return true;
-  }
+  } // isNum(String)
 
+  /**
+   * Checks if the string is an operator.
+   * @param str
+   *    The string to check
+   * @return true if the string is an operator and false otherwise
+   */
   public static boolean isOp(String str) {
     if ((str.equals("+")) || (str.equals("-")) || (str.equals("*")) || (str.equals("/"))) {
-          return true;
-    }
+      return true;
+    } // if
     return false;
-  }
+  } // isOp(String)
 
+  /**
+   * Prints an error message to the user.
+   */
   public static void printErr() {
     PrintWriter pen = new PrintWriter(System.out, true);
     pen.print("*** Error - Invalid Input\n");
     pen.flush();
-  }
-}
+  } // printErr
+} // class InteractiveCalculator
