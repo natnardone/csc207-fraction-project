@@ -20,13 +20,17 @@ public class QuickCalculator {
     boolean status = true;
 
     for (int i = 0; i < args.length; i++) {
-      status = true;
-      String[] values = args[i].split(" ");
-
-      status = InteractiveCalculator.calcExpression(calc, values, reg);
-      if (!status) {
+      if (args[i].equals("")) {
         InteractiveCalculator.printErr();
-      } // if
+      } else {
+        status = true;
+        String[] values = args[i].split(" ");
+
+        status = InteractiveCalculator.calcExpression(calc, values, reg);
+        if (!status) {
+          InteractiveCalculator.printErr();
+        } // if
+      } // if/else
     } // for
 
     calc.clear();
