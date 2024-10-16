@@ -29,13 +29,17 @@ public class InteractiveCalculator {
     boolean status = true;
 
     while (!temp.equals("QUIT")) {
-      status = true;
-      String[] values = temp.split(" ");
-
-      status = InteractiveCalculator.calcExpression(calc, values, reg);
-      if (!status) {
+      if ((temp.equals("")) || (temp.equals(" ")) || (temp.charAt(0) == ' ')) {
         InteractiveCalculator.printErr();
-      } // if
+      } else {
+        status = true;
+        String[] values = temp.split(" ");
+
+        status = InteractiveCalculator.calcExpression(calc, values, reg);
+        if (!status) {
+          InteractiveCalculator.printErr();
+        } // if
+      } // if/else
 
       temp = input.nextLine();
     } // while
@@ -61,6 +65,7 @@ public class InteractiveCalculator {
     String first = values[0];
     PrintWriter pen = new PrintWriter(System.out, true);
 
+    // check if we are storing a value in a register
     if (first.equals("STORE")) {
       if (InteractiveCalculator.isReg(values[1])) {
         reg.store(values[1].charAt(0), calc.get());
@@ -70,14 +75,17 @@ public class InteractiveCalculator {
       } // if
     } // if
 
+    // clear calculator since we no longer need previous value
     calc.clear();
 
+    // check validity of all inputs
     for (int i = 0; i < values.length; i++) {
       if (!InteractiveCalculator.checkValid(values[i])) {
         return false;
       } // if
     } // if
 
+    // first input can't be an operation
     if (InteractiveCalculator.isOp(first)) {
       return false;
     } // if
@@ -89,13 +97,18 @@ public class InteractiveCalculator {
       calc.add(reg.get(first.charAt(0)));
     } // if
 
+    // if single value, print
     if (values.length == 1) {
       pen.print(calc.get().toString() + "\n");
       pen.flush();
       return true;
     } // if
 
+    // if invalid expression length, return false
     if (values.length < 3) {
+      return false;
+    } // if
+    if (values.length % 2 != 1) {
       return false;
     } // if
 
@@ -103,14 +116,12 @@ public class InteractiveCalculator {
     String currentNum;
     BigFraction val;
 
-    if (values.length % 2 != 1) {
-      return false;
-    } // if
-
+    // loop through each pair of operations and values, updating calc
     for (int o = 1, n = 2; o < values.length - 1 && n < values.length; o += 2, n += 2) {
       currentOp = values[o];
       currentNum = values[n];
       val = null;
+      // makes sure operation and number/register are in correct order and are valid
       if (!InteractiveCalculator.isOp(currentOp)) {
         return false;
       } // if
@@ -126,6 +137,7 @@ public class InteractiveCalculator {
         return false;
       } // if
 
+      // perform requested operation on val
       switch (currentOp) {
         case "+":   calc.add(val);
                     break;
@@ -139,6 +151,7 @@ public class InteractiveCalculator {
       } // switch
     } // for
 
+    // print result of expression
     pen.print(calc.get().toString() + "\n");
     pen.flush();
     return true;

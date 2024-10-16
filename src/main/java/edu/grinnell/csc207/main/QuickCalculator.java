@@ -19,8 +19,9 @@ public class QuickCalculator {
     BFRegisterSet reg = new BFRegisterSet();
     boolean status = true;
 
+    // loop through each expression in the input
     for (int i = 0; i < args.length; i++) {
-      if (args[i].equals("")) {
+      if ((args[i].equals("")) || (args[i].equals(" ")) || (args[i].charAt(0) == ' ')) {
         InteractiveCalculator.printErr();
       } else {
         status = true;
